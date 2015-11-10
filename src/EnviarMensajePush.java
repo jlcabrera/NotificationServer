@@ -30,8 +30,8 @@ public class EnviarMensajePush extends HttpServlet {
 	public EnviarMensajePush() {
 		super();
 		// TODO Auto-generated constructor stub
+		//esto es un test entre ramas
 	}
-
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
