@@ -22,5 +22,10 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/Users/Zeky/Documents/Desarrollo/Desarollo Viafirma/Librerías/aws-java-sdk-1.10.26/lib/aws-java-sdk-1.10.26-javadoc.jar"/>
+	<classpathentry kind="lib" path="/Users/Zeky/Documents/Desarrollo/Desarollo Viafirma/Librerías/aws-java-sdk-1.10.26/lib/aws-java-sdk-1.10.26-sources.jar"/>
+	<classpathentry kind="lib" path="/Users/Zeky/Documents/Desarrollo/Desarollo Viafirma/Librerías/aws-java-sdk-1.10.26/lib/aws-java-sdk-1.10.26.jar"/>
+	<classpathentry kind="lib" path="/Users/Zeky/Documents/Desarrollo/Desarollo Viafirma/Librerías/aws-java-sdk-1.10.26/lib/aws-java-sdk-flow-build-tools-1.10.26.jar"/>
+	<classpathentry kind="lib" path="/Users/Zeky/Documents/Desarrollo/Desarollo Viafirma/Librerías/aws-java-sdk-1.10.26/lib/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
