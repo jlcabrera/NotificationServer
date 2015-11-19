@@ -31,7 +31,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Amazon {
-	private static AmazonSNSClient snsClient;
+	private AmazonSNSClient snsClient;
 	private List<String> applications; 
 	
 	public Amazon(){
@@ -89,7 +89,7 @@ public class Amazon {
 		return arn;
 	}
 	
-	private static void iniciarSesionAmazonSNS(){
+	private void iniciarSesionAmazonSNS(){
 		try {
 			snsClient = new AmazonSNSClient(new PropertiesCredentials(new File("/Users/Zeky/Documents/espacioTrabajo/NotificationServer/AwsCredentials.properties")));
 		} catch (FileNotFoundException e) {
@@ -100,9 +100,50 @@ public class Amazon {
 			e.printStackTrace();
 		}
 	}
+
+//	public static void main(String[] args) {
+//		try {
+//			
+//			//snsClient = new AmazonSNSClient(new PropertiesCredentials(new File("AwsCredentials.properties")));
+//			
+//			//Creamos una nueva aplicación
+//			CreatePlatformApplicationResult platformResult = createPlatformApplication();
+//			
+//			//Guardamos el ARN del resultado de la petición en un String;
+//			String applicationARN = platformResult.getPlatformApplicationArn();
+//			System.out.println(applicationARN);
+//			
+//			//leemos el identificador
+//			List<String> platformTokens = FileUtils.readLines(new File("registro.txt"));
+//			System.out.println(platformTokens.get(0));
+//			
+//			//Creamos un nuevo Endpoint asociada a la aplicación
+//			CreatePlatformEndpointResult platformEndpointResult = createPlatformEndpoint(Platform.GCM,"CustomData - Useful to store endpint specific data", platformTokens.get(0), applicationARN);
+//			System.out.println(platformEndpointResult.getEndpointArn());
+//			String endopointARN  = platformEndpointResult.getEndpointArn();
+//			
+//			//Creamos un nuevo topic
+//			CreateTopicResult topicResult = createTopicResult();
+//			String topicARN = topicResult.getTopicArn();
+//			System.out.println(topicARN);
+//			
+//			//Suscribimos la aplicación al topic
+//			subscribeTopic(endopointARN, "application", endopointARN);
+//			
+//			//Ahora toca publicar algo al endpoint para ver si llega la notificación al dispositivo
+//			PublishResult publishResult = publish(endopointARN, Platform.GCM, "test");
+//			System.out.println("Published! \n{MessageId=" + publishResult.getMessageId() + "}");
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		} catch (IllegalArgumentException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
 	
 	//metodo para crear una nueva aplicación
-	private static CreatePlatformApplicationResult createPlatformApplication(){
+	private CreatePlatformApplicationResult createPlatformApplication(){
 		CreatePlatformApplicationRequest platformApplicationRequest = new CreatePlatformApplicationRequest();
 		Map<String, String> attributes = new HashMap<String, String>();
 		attributes.put("PlatformPrincipal", "");
@@ -114,7 +155,7 @@ public class Amazon {
 	}
 	
 	//metodo para crear un endpoint correspondiente a la aplicación
-	private static CreatePlatformEndpointResult createPlatformEndpoint(Platform platform, String customData, String platformToken, String aplicationArn){
+	private CreatePlatformEndpointResult createPlatformEndpoint(Platform platform, String customData, String platformToken, String aplicationArn){
 		CreatePlatformEndpointRequest platformEndpointRequest = new CreatePlatformEndpointRequest();
 		platformEndpointRequest.setCustomUserData(customData);
 		String token = platformToken;
@@ -125,7 +166,7 @@ public class Amazon {
 	}
 	
 	//metodo para publicar un mensaje de ejemplo en un dispositivo concreto
-	private static PublishResult publish(String endpointARN, Platform platform, String mes){
+	private PublishResult publish(String endpointARN, Platform platform, String mes){
 		PublishRequest publishRequest = new PublishRequest();
 		publishRequest.setMessageStructure("json");
 		String message = getSampleMessage(mes);
@@ -143,18 +184,18 @@ public class Amazon {
 	}
 	
 	//metodo para crear un topic
-	private static CreateTopicResult createTopicResult(){
+	private CreateTopicResult createTopicResult(){
 		CreateTopicRequest topic = new CreateTopicRequest();
 		topic.setName("SNStopic");
 		return snsClient.createTopic(topic);
 	}
 
 	//metodo para crear la suscripción a un topic
-	private static void subscribeTopic(String topicARN, String protocol, String endpoint){
+	private  void subscribeTopic(String topicARN, String protocol, String endpoint){
 		SubscribeRequest subRequest = new SubscribeRequest(topicARN, protocol, endpoint);
 	}
 	
-	private static Map<String, MessageAttributeValue> getValidNotificationAttributes(Map<String, MessageAttributeValue> notificationAttributes){
+	private  Map<String, MessageAttributeValue> getValidNotificationAttributes(Map<String, MessageAttributeValue> notificationAttributes){
 		Map<String, MessageAttributeValue> validAttributes = new HashMap<String, MessageAttributeValue>();
 		
 		if(notificationAttributes == null){
