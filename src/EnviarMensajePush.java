@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 
+import com.amazonaws.services.cognitosync.model.Platform;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -43,19 +44,24 @@ public class EnviarMensajePush extends HttpServlet {
 		String mensaje = request.getParameter("mensaje");
 		// SE lee el identificador de registro guardado previamente a través del
 		// servicio REST
-		String idRegistro = recuperarIdRegistro();
+//		String idRegistro = recuperarIdRegistro();
 
-		Json json = new Json(new Data(mensaje), idRegistro);
-		GsonBuilder builder = new GsonBuilder();
-		builder.setPrettyPrinting();
-		Gson gson = builder.create();
+//		Json json = new Json(new Data(mensaje), idRegistro);
+//		GsonBuilder builder = new GsonBuilder();
+//		builder.setPrettyPrinting();
+//		Gson gson = builder.create();
+//
+//		System.out.println(gson.toJson(json));
+//		
+//		String respuesta = Gcm.invocarServicioGCM(gson.toJson(json), URL_GOOGLE_CLOUD_MESSAGE, API_KEY);
+//		System.out.println(respuesta);
 
-		System.out.println(gson.toJson(json));
+		Amazon a = new Amazon();
+		a.publishAllDevices(Platform.GCM, mensaje);
 		
-		String respuesta = Gcm.invocarServicioGCM(gson.toJson(json), URL_GOOGLE_CLOUD_MESSAGE, API_KEY);
-		System.out.println(respuesta);
-
 		getServletContext().getRequestDispatcher("/index.html").forward(request, response);
+		
+		
 	}
 
 	/**

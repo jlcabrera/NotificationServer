@@ -41,7 +41,7 @@ public class Server extends HttpServlet {
 		String id = request.getParameter("mensaje");
 		System.out.println("la respuesta del movil es: " + id);
 		try{
-			FileUtils.writeStringToFile(new File(PATH), id);
+			FileUtils.writeStringToFile(new File(PATH), id, true);
 			System.out.println("Se ha insertado un nuevo registro en el archivo de configuración");
 		}catch(IOException e){
 			e.printStackTrace(); 	
