@@ -56,7 +56,7 @@ public class EnviarMensajePush extends HttpServlet {
 //		String respuesta = Gcm.invocarServicioGCM(gson.toJson(json), URL_GOOGLE_CLOUD_MESSAGE, API_KEY);
 //		System.out.println(respuesta);
 
-		Amazon a = new Amazon();
+		Amazon a = new Amazon("AKIAJ4BLLIOLU7LRA7LQ", "ZSaMzhxO2BJeZYFx/hJj8QgTPd+e3rFbaK8I3egY");
 		a.publishAllDevices(Platform.GCM, mensaje);
 		
 		getServletContext().getRequestDispatcher("/index.html").forward(request, response);

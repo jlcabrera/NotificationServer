@@ -3,15 +3,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.tomcat.util.codec.binary.StringUtils;
-
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.PropertiesCredentials;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.cognitosync.model.Platform;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.model.CreatePlatformApplicationRequest;
@@ -27,7 +25,6 @@ import com.amazonaws.services.sns.model.PlatformApplication;
 import com.amazonaws.services.sns.model.PublishRequest;
 import com.amazonaws.services.sns.model.PublishResult;
 import com.amazonaws.services.sns.model.SubscribeRequest;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Amazon {
@@ -39,6 +36,23 @@ public class Amazon {
 		this.applications = listApplications();
 	}
 	
+	public Amazon(String accessKey, String secretPass){
+		iniciarSesionAmazonSNS(accessKey, accessKey);
+		this.applications = listApplications();
+	}
+	
+	public Amazon(File AwsCredentials){
+		try {
+			this.snsClient = new AmazonSNSClient(new PropertiesCredentials(AwsCredentials));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public List<String> getEndpoints(String applicationName){
 		String arnApplication = getApplication(applicationName);
 		List<String> endpoints = new ArrayList<String>();
@@ -47,6 +61,8 @@ public class Amazon {
 			ListEndpointsByPlatformApplicationRequest listEndpointsByPlatformApplicationRequest = new ListEndpointsByPlatformApplicationRequest();
 			listEndpointsByPlatformApplicationRequest.setPlatformApplicationArn(arnApplication);
 			List<Endpoint> listEndpoints = this.snsClient.listEndpointsByPlatformApplication(listEndpointsByPlatformApplicationRequest).getEndpoints();
+			//Comprobacion de los tokens para la lista de los endpoints
+			System.out.println(listEndpointsByPlatformApplicationRequest.getNextToken());
 			for(Endpoint e : listEndpoints){
 				endpoints.add(e.getEndpointArn());
 			}
@@ -100,6 +116,12 @@ public class Amazon {
 			e.printStackTrace();
 		}
 	}
+	
+	private void iniciarSesionAmazonSNS(String user, String pass){
+		BasicAWSCredentials credenciales = new BasicAWSCredentials(user, pass);
+		snsClient = new AmazonSNSClient(credenciales);
+		
+	}
 
 //	public static void main(String[] args) {
 //		try {
@@ -143,15 +165,15 @@ public class Amazon {
 //	}
 	
 	//metodo para crear una nueva aplicación
-	private CreatePlatformApplicationResult createPlatformApplication(){
+	public String createPlatformApplication(String serverKey){
 		CreatePlatformApplicationRequest platformApplicationRequest = new CreatePlatformApplicationRequest();
 		Map<String, String> attributes = new HashMap<String, String>();
 		attributes.put("PlatformPrincipal", "");
-		attributes.put("PlatformCredential", "AIzaSyC0_DzxRPyWRYtVUQBi4C3iWTTYZ_4bglc" );
+		attributes.put("PlatformCredential",serverKey);
 		platformApplicationRequest.setAttributes(attributes);
 		platformApplicationRequest.setName("PruebaServidor");
 		platformApplicationRequest.setPlatform(Platform.GCM.name());
-		return snsClient.createPlatformApplication(platformApplicationRequest);
+		return snsClient.createPlatformApplication(platformApplicationRequest).getPlatformApplicationArn();
 	}
 	
 	//metodo para crear un endpoint correspondiente a la aplicación
